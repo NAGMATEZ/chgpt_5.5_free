@@ -1,44 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="512"
-     height="512"
-     viewBox="0 0 512 512">
-
-<rect
-x="0"
-y="0"
-width="512"
-height="512"
-rx="110"
-fill="#2563eb"/>
-
-<circle
-cx="256"
-cy="256"
-r="165"
-fill="#ffffff"/>
-
-<path
-d="M160 292 L220 232 L265 270 L352 183"
-stroke="#16a34a"
-stroke-width="24"
-fill="none"
-stroke-linecap="round"
-stroke-linejoin="round"/>
-
-<circle cx="160" cy="292" r="16" fill="#16a34a"/>
-<circle cx="220" cy="232" r="16" fill="#16a34a"/>
-<circle cx="265" cy="270" r="16" fill="#16a34a"/>
-<circle cx="352" cy="183" r="16" fill="#16a34a"/>
-
-<text
-x="256"
-y="435"
-font-size="64"
-font-family="Arial, sans-serif"
-font-weight="bold"
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="90" fill="#2e7d32"/>
+<circle cx="256" cy="256" r="170" fill="#ffffff"/>
+<text x="256" y="310"
 text-anchor="middle"
-fill="#ffffff">
-BM
-</text>
-
+font-family="Arial"
+font-size="190"
+font-weight="bold"
+fill="#2e7d32">₿</text>
 </svg>
