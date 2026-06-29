@@ -1,59 +1,34 @@
-
 const CACHE_NAME = "budget-manager-v1.0.0";
 
-const APP_SHELL = [
+const APP_ASSETS = [
 
-"./",
+".",
+
 "./index.html",
+
 "./manifest.json",
-"./icon-192.svg",
-"./icon-512.svg"
+
+"./service-worker.js",
+
+"./icon-192.png",
+
+"./icon-512.png"
 
 ];
 
-const CDN_ASSETS = [
+const CDN_CACHE = "budget-cdn";
 
-"https://unpkg.com/dexie/dist/dexie.js",
+const APP_CACHE = "budget-cache";
 
-"https://cdn.jsdelivr.net/npm/chart.js",
-
-"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
-
-];
-
-self.addEventListener(
-"install",
-event=>{
+self.addEventListener("install",event=>{
 
 event.waitUntil(
 
 (async()=>{
 
-const cache =
-await caches.open(
-CACHE_NAME
-);
+const cache=await caches.open(APP_CACHE);
 
-await cache.addAll(
-APP_SHELL
-);
-
-for(const url of CDN_ASSETS){
-
-try{
-
-await cache.add(url);
-
-}catch(err){
-
-console.warn(
-"CDN precache hiba:",
-url
-);
-
-}
-
-}
+await cache.addAll(APP_ASSETS);
 
 await self.skipWaiting();
 
@@ -61,31 +36,29 @@ await self.skipWaiting();
 
 );
 
-}
-);
+});
 
-self.addEventListener(
-"activate",
-event=>{
+self.addEventListener("activate",event=>{
 
 event.waitUntil(
 
 (async()=>{
 
-const names =
-await caches.keys();
+const keys=await caches.keys();
 
 await Promise.all(
 
-names.map(name=>{
+keys.map(key=>{
 
 if(
-name !== CACHE_NAME
+
+key!==APP_CACHE&&
+
+key!==CDN_CACHE
+
 ){
 
-return caches.delete(
-name
-);
+return caches.delete(key);
 
 }
 
@@ -93,23 +66,22 @@ name
 
 );
 
-await self.clients.claim();
+await clients.claim();
 
 })()
 
 );
 
-}
-);
+});
 
-self.addEventListener(
-"message",
-event=>{
+self.addEventListener("message",event=>{
 
 if(
-event.data &&
-event.data.type ===
-"SKIP_WAITING"
+
+event.data&&
+
+event.data.type==="SKIP_WAITING"
+
 ){
 
 self.skipWaiting();
@@ -118,69 +90,75 @@ self.skipWaiting();
 
 });
 
-self.addEventListener(
-"fetch",
-event=>{
+self.addEventListener("fetch",event=>{
 
-const request =
-event.request;
+const request=event.request;
+
+const url=new URL(request.url);
 
 if(
-request.method !==
-"GET"
-){
 
-return;
+request.method!=="GET"
 
-}
+)return;
 
 event.respondWith(
 
 (async()=>{
 
-const cache =
-await caches.open(
-CACHE_NAME
-);
+const cache=await caches.match(request);
 
-const cached =
-await cache.match(
-request
-);
+if(cache){
 
-if(cached){
-
-return cached;
+return cache;
 
 }
 
 try{
 
-const response =
-await fetch(
-request
-);
+const network=await fetch(request);
 
 if(
-response &&
-response.status === 200
+
+url.origin===location.origin||
+
+url.hostname.includes("unpkg.com")||
+
+url.hostname.includes("jsdelivr.net")
+
 ){
 
-cache.put(
+const store=await caches.open(
+
+url.origin===location.origin
+
+?
+
+APP_CACHE
+
+:
+
+CDN_CACHE
+
+);
+
+store.put(
+
 request,
-response.clone()
+
+network.clone()
+
 );
 
 }
 
-return response;
+return network;
 
-}catch(err){
+}
 
-const offline =
-await cache.match(
-"./index.html"
-);
+catch(e){
+
+const offline=await caches.match(request);
 
 if(offline){
 
@@ -188,7 +166,17 @@ return offline;
 
 }
 
-throw err;
+if(
+
+request.destination==="document"
+
+){
+
+return caches.match("./index.html");
+
+}
+
+throw e;
 
 }
 
