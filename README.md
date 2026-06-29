@@ -4,215 +4,116 @@ Offline-first személyes költségvetés-kezelő Progressive Web App.
 
 ## Funkciók
 
-- Dashboard havi egyenleggel
-- Kategóriánkénti kiadási diagram
-- Tranzakció CRUD
-- Kategória kezelés
-- Havi limitek
-- Limit túllépés jelzés
-- Megtakarítási célok
-- OCR alapú tranzakció rögzítés
-- IndexedDB alapú adattárolás
-- Teljes offline működés
+- Offline működés
+- IndexedDB (Dexie)
 - Telepíthető PWA
+- Kiadás / Bevétel kezelés
+- Kategóriák
+- Havi limitek
+- Megtakarítási cél
+- OCR (Tesseract.js)
+- Chart.js diagram
+- HUF / EUR / USD támogatás
+- Mobilra optimalizálva
 
 ---
 
-# Lokális tesztelés
+# Lokális futtatás
 
-A service worker miatt az alkalmazás nem fut megfelelően `file://` protokollról.
+A Service Worker miatt **nem működik file:// protokollról**.
 
-Indíts helyi webszervert:
+Használj egyszerű HTTP szervert.
+
+Python:
 
 ```bash
 python -m http.server 8080
 ```
 
-Ezután nyisd meg:
+Ezután:
 
-```text
+```
 http://localhost:8080
 ```
 
 ---
 
-# PWA telepítés Android Chrome alatt
+# Chrome Android
 
-1. Nyisd meg az alkalmazást Chrome böngészőben.
-2. Várd meg amíg az oldal teljesen betöltődik.
-3. Koppints a Chrome menüre (⋮).
-4. Válaszd:
+1. Nyisd meg az alkalmazást.
+2. Várd meg míg teljesen betölt.
+3. Chrome menü.
+4. **Add to Home Screen**.
+5. Telepítés.
 
-```text
-Add to Home Screen
-```
-
-vagy
-
-```text
-Install App
-```
-
-5. Erősítsd meg a telepítést.
-6. Az alkalmazás önálló appként fog indulni.
+Az alkalmazás ezután natív alkalmazásként indul.
 
 ---
 
-# PWA telepítés iPhone / iPad Safari alatt
+# Safari iPhone
 
-1. Nyisd meg az alkalmazást Safari böngészőben.
-2. Koppints a Megosztás ikonra.
-3. Válaszd:
+1. Nyisd meg Safari böngészőben.
+2. Share gomb.
+3. Add to Home Screen.
+4. Add.
 
-```text
-Add to Home Screen
-```
-
-4. Adj nevet az alkalmazásnak.
-5. Nyomd meg az Add gombot.
-6. Az app megjelenik a kezdőképernyőn.
+Ezután standalone módban indul.
 
 ---
 
-# Offline működés
+# Offline teszt
 
-Az első sikeres betöltés után a Service Worker cache-eli:
+1. Nyisd meg egyszer online.
+2. Telepítsd.
+3. Kapcsold ki az internetet.
+4. Indítsd újra.
 
-- index.html
-- manifest.json
-- ikonok
-- Dexie.js
-- Chart.js
-- Tesseract.js
-
-Ezután az alkalmazás internetkapcsolat nélkül is használható.
+Az alkalmazásnak teljes értékűen működnie kell.
 
 ---
 
-# OCR tesztelés
+# OCR
 
-Ajánlott képformátumok:
+Ajánlott formátum:
 
 - PNG
 - JPG
 - JPEG
 
-Ajánlott minimális felbontás:
+Ajánlott felbontás:
 
-```text
-1080 × 1920
+Minimum:
+
+```
+1080 px
 ```
 
-vagy magasabb.
+Optimális:
 
-Legjobb eredmény:
-
-- éles screenshot
-- sötét szöveg világos háttéren
-- levágás nélkül
-
-Felismerett minták:
-
-## HUF
-
-```regex
-\d[\d\s]*\s?(Ft|HUF)
+```
+1440–2160 px
 ```
 
-Példák:
-
-```text
-12 500 Ft
-150000 HUF
-```
-
-## EUR
-
-```regex
-€?\s?\d+[.,]\d{2}
-```
-
-Példák:
-
-```text
-€12.50
-12,50
-```
-
-## USD
-
-```regex
-\$?\s?\d+[.,]\d{2}
-```
-
-Példák:
-
-```text
-$12.50
-12.50
-```
-
-## Dátum
-
-```regex
-\d{4}[-./]\d{2}[-./]\d{2}
-```
-
-Példa:
-
-```text
-2026-06-25
-```
-
-vagy
-
-```regex
-\d{2}[-./]\d{2}[-./]\d{4}
-```
-
-Példa:
-
-```text
-25-06-2026
-```
+Lehetőleg éles banki vagy wallet screenshot.
 
 ---
 
-# Adattárolás
+# Támogatott pénznemek
 
-Minden adat helyben kerül tárolásra:
-
-- IndexedDB
-- Dexie.js
-
-Az alkalmazás:
-
-- nem használ backend szervert
-- nem küld adatot külső API-nak
-- nem igényel regisztrációt
-- nem igényel bejelentkezést
+- HUF
+- EUR
+- USD
 
 ---
 
-# Projekt fájlok
+# Adatok
 
-```text
-index.html
-manifest.json
-service-worker.js
-icon-192.svg
-icon-512.svg
-README.md
-```
+Minden adat kizárólag a böngésző IndexedDB adatbázisában tárolódik.
 
----
+Nincs backend.
 
-# Megjegyzés
+Nincs felhő.
 
-Ha új verzió érhető el, az alkalmazás értesítést jelenít meg:
+Nincs regisztráció.
 
-```text
-Frissítés elérhető — Újratöltés
-```
-
-Az új Service Worker aktiválható az alkalmazás újratöltésével.
+Nincs külső adatküldés.
